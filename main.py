@@ -16,6 +16,7 @@ folder_create_key = 'v'
 sftp_create_key = 'f'
 sftp_renew_key = 'g'
 open_winscp_key = 'e'
+open_cpuploader_key = 'u'
 
 # Paths and URLs
 ad_user = getpass.getuser()
@@ -23,6 +24,7 @@ srs_path = "\\\\planet\\support\\SRs\\"
 sftp_create_url = 'https://ftp-win.checkpoint.com:8181/TACusers/newuser.asp'
 email = ad_user + '@checkpoint.com'
 downloads_path = "C:\\Users\\" + ad_user + "\\Downloads\\"
+cp_uploader_path = "\\\\ftp-win.checkpoint.com\\cpuploaderverified\\"
 
 log_file_extensions = ["log", "elg", "txt"]
 img_file_extensions = ["jpg", "jpeg", "gif", "png"]
@@ -135,6 +137,14 @@ def open_winscp():
         print('Failed to open sftp: ' + command)
     subprocess.run(command)
 
+def open_cpuploader():
+    # Get case number
+    case_number = get_clean_clipboard()
+    case_number = parse_case_number(case_number)
+
+    open_folder(cp_uploader_path + case_number)
+
+
 # Contains logic for input processing
 # All keys require ctrl + alt as well to be processed
 class Button:
@@ -160,6 +170,7 @@ folders_button = Button(folder_create_key, create_open_folder)
 sftp_create_button = Button(sftp_create_key, create_sftp)
 sftp_renew_button = Button(sftp_renew_key, renew_sftp)
 open_winscp_button = Button(open_winscp_key, open_winscp)
+open_cpuploader_button = Button(open_cpuploader_key, open_cpuploader)
 
 # Single processing of all buttons
 def buttons_process():
@@ -168,6 +179,7 @@ def buttons_process():
         sftp_create_button.process()
         sftp_renew_button.process()
         open_winscp_button.process()
+        open_cpuploader_button.process()
     except Exception as e:
         print(e)
 
@@ -252,6 +264,7 @@ create_ui_button("Create/Open Folders", 4, folders_button)
 create_ui_button("Create SFTP", 5, sftp_create_button)
 create_ui_button("Renew SFTP", 6, sftp_renew_button)
 create_ui_button("Open WinSCP", 7, open_winscp_button)
+create_ui_button("Open CP Uploader", 8, open_cpuploader_button)
 
 # Constantly keeps processing buttons
 def process_buttons_loop():
